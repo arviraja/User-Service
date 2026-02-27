@@ -1,9 +1,7 @@
 package com.moviebooking.userservice.controller;
 
 import com.moviebooking.userservice.dto.RegisterRequest;
-import com.moviebooking.userservice.entity.User;
 import com.moviebooking.userservice.service.UserService;
-import com.netflix.discovery.converters.Auto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
