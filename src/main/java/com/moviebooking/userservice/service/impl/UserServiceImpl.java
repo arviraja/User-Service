@@ -1,6 +1,8 @@
 package com.moviebooking.userservice.service.impl;
 
+import com.moviebooking.userservice.config.JwtUtil;
 import com.moviebooking.userservice.dto.LoginRequest;
+import com.moviebooking.userservice.dto.LoginResponse;
 import com.moviebooking.userservice.dto.RegisterRequest;
 import com.moviebooking.userservice.entity.User;
 import com.moviebooking.userservice.repository.UserRepository;
@@ -16,6 +18,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @Override
     public String registerUser(RegisterRequest request) {
@@ -59,7 +64,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String login(LoginRequest request)
+    public LoginResponse login(LoginRequest request)
     {
         User user;
         if(request.getUsername().contains("@"))
@@ -73,6 +78,7 @@ public class UserServiceImpl implements UserService {
         {
             throw new RuntimeException("passwords don't match");
         }
-        return "Logged in successfully";
+        String token = jwtUtil.generateToken(user);
+        return new LoginResponse(token);
     }
 }

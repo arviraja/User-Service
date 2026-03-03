@@ -1,6 +1,7 @@
 package com.moviebooking.userservice.controller;
 
 import com.moviebooking.userservice.dto.LoginRequest;
+import com.moviebooking.userservice.dto.LoginResponse;
 import com.moviebooking.userservice.dto.RegisterRequest;
 import com.moviebooking.userservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/movieBooking")
 public class UserController {
     @Autowired
     private UserService userService;
@@ -24,7 +25,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public String login(@Valid @RequestBody LoginRequest request)
+    public LoginResponse login(@Valid @RequestBody LoginRequest request)
     {
         return userService.login(request);
     }
