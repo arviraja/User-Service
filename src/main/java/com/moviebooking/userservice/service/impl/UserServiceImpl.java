@@ -1,16 +1,26 @@
 package com.moviebooking.userservice.service.impl;
 
+import com.moviebooking.userservice.config.JwtUtil;
+import com.moviebooking.userservice.dto.LoginRequest;
+import com.moviebooking.userservice.dto.LoginResponse;
 import com.moviebooking.userservice.dto.RegisterRequest;
 import com.moviebooking.userservice.entity.User;
 import com.moviebooking.userservice.repository.UserRepository;
 import com.moviebooking.userservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @Override
     public String registerUser(RegisterRequest request) {
@@ -30,7 +40,7 @@ public class UserServiceImpl implements UserService {
         user.setLastName(request.getLastName());
         user.setEmail(request.getEmail());
         user.setLoginId(request.getLoginId());
-        user.setPassword(request.getPassword());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setContactNumber(request.getContactNumber());
 
         String roleRequest = request.getRole();
@@ -51,5 +61,24 @@ public class UserServiceImpl implements UserService {
         }
         userRepository.save(user);
         return "User registered successfully";
+    }
+
+    @Override
+    public LoginResponse login(LoginRequest request)
+    {
+        User user;
+        if(request.getUsername().contains("@"))
+        {
+            user = userRepository.findByEmail(request.getUsername()).orElseThrow(() -> new RuntimeException("User not found"));
+        }
+        else {
+            user = userRepository.findByLoginId(request.getUsername()).orElseThrow(() -> new RuntimeException("User not found"));
+        }
+        if(!passwordEncoder.matches(request.getPassword(), user.getPassword()))
+        {
+            throw new RuntimeException("passwords don't match");
+        }
+        String token = jwtUtil.generateToken(user);
+        return new LoginResponse(token);
     }
 }
