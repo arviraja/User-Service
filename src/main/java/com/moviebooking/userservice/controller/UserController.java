@@ -4,7 +4,10 @@ import com.moviebooking.userservice.dto.LoginRequest;
 import com.moviebooking.userservice.dto.LoginResponse;
 import com.moviebooking.userservice.dto.RegisterRequest;
 import com.moviebooking.userservice.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,8 +28,8 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public LoginResponse login(@Valid @RequestBody LoginRequest request)
+    public LoginResponse login(@Valid @RequestBody LoginRequest request , HttpServletResponse response)
     {
-        return userService.login(request);
+        return userService.login(request,response);
     }
 }

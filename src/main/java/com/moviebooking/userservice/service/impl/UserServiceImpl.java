@@ -7,6 +7,7 @@ import com.moviebooking.userservice.dto.RegisterRequest;
 import com.moviebooking.userservice.entity.User;
 import com.moviebooking.userservice.repository.UserRepository;
 import com.moviebooking.userservice.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private JwtUtil jwtUtil;
+
 
     @Override
     public String registerUser(RegisterRequest request) {
@@ -64,7 +66,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public LoginResponse login(LoginRequest request)
+    public LoginResponse login(LoginRequest request, HttpServletResponse response)
     {
         User user;
         if(request.getUsername().contains("@"))
@@ -76,9 +78,19 @@ public class UserServiceImpl implements UserService {
         }
         if(!passwordEncoder.matches(request.getPassword(), user.getPassword()))
         {
-            throw new RuntimeException("passwords don't match");
+              throw new RuntimeException("passwords don't match");
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         String token = jwtUtil.generateToken(user);
+
+//        Cookie cookie = new Cookie("accessToken",token);
+//        cookie.setHttpOnly(true);
+//        cookie.setSecure(false);
+//        cookie.setPath("/");
+//        cookie.setMaxAge(60*60);
+//        response.addCookie(cookie);
+
+//        return ResponseEntity.ok("Logged in successfully");
         return new LoginResponse(token);
     }
 }
